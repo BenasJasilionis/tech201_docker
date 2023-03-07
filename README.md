@@ -1,1 +1,243 @@
-# tech201_docker
+## Docker architecture
+* Docker installed locally
+* Want to communicate with dockerhub
+* When a command such as `docker run` is activated on a local client, docker first checks local host resources, namely `docker_host` for the requested image
+* If the local `docker-host` does not have the image, then api calls will be used to communicate with `dockerhub`
+* This is done through api calls made in the background
+* Once `dockerhub` gets the request, if the image exists and is gloablly available, it will be pulled into the local `docker_host` system and will be executed (depending on the command used)
+
+![](images/docker_arch.png)
+
+## Docker commands
+* **Management commands:**
+* `Docker run` -> if image is locally unavailable, sends a request to docker hub. Run means pull and execute. Creates a container from image -> it is now in a running state
+* `docker pull` -> only downloads it
+* `docker build` -> Builds a docker image from a `Dockerfile` and a `context file` (for example, a file to be copied into an image, think about how nginx configurations are changed)
+* `docker stop container_id`
+* `docker start container_id`
+* `docker push` -> send an image to dockerhub
+* `-d` detached mode -> wont lock our browser
+* `80:80` connect the local port 80 with image port
+* For example: `docker run -d -p 80:80 nginx` ->This will download nginx image and execute it, creating a container
+* Entering `localhost` into our search engine should show the nginx home page, because by default `localhost` uses port 80
+* Push denied -> dont have access to your account or access to your repository
+* `docker ps` -> shows how many containers are running, container id, from what image, what port, when it was created, up time, name of container
+* `docker rm container_id -f` forcefully removes a specified container
+*  buildx*     Docker Buildx (Docker Inc., v0.10.3)
+*  compose*    Docker Compose (Docker Inc., v2.15.1)
+*  config      Manage Docker configs
+*  container   Manage containers
+*  context     Manage contexts
+*  dev*        Docker Dev Environments (Docker Inc., v0.1.0)
+*  extension*  Manages Docker extensions (Docker Inc., v0.2.18)
+*  image       Manage images
+*  manifest    Manage Docker image manifests and manifest lists
+*  network     Manage networks
+*  node        Manage Swarm nodes
+*  plugin      Manage plugins
+*  sbom*       View the packaged-based Software Bill Of Materials (SBOM) for an image (Anchore Inc., 0.6.0)
+*  scan*       Docker Scan (Docker Inc., v0.25.0)
+*  scout*      Command line tool for Docker Scout (Docker Inc., v0.6.0)
+*  secret      Manage Docker secrets
+*  service     Manage services
+*  stack       Manage Docker stacks
+*  swarm       Manage Swarm
+*  system      Manage Docker
+*  trust       Manage trust on Docker images
+*  volume      Manage volumes
+* **Commands:**
+*  attach      Attach local standard input, output, and error streams to a running container
+*  build       Build an image from a Dockerfile
+*  commit      Create a new image from a container's changes
+*  cp          Copy files/folders between a container and the local filesystem
+*  create      Create a new container
+*  diff        Inspect changes to files or directories on a container's filesystem
+*  events      Get real time events from the server
+*  exec        Run a command in a running container
+*  export      Export a container's filesystem as a tar archive
+*  history     Show the history of an image
+*  images      List images
+*  import      Import the contents from a tarball to create a filesystem image
+*  info        Display system-wide information
+*  inspect     Return low-level information on Docker objects
+*  kill        Kill one or more running containers
+*  load        Load an image from a tar archive or STDIN
+*  login       Log in to a Docker registry
+*  logout      Log out from a Docker registry
+*  logs        Fetch the logs of a container
+*  pause       Pause all processes within one or more containers
+*  port        List port mappings or a specific mapping for the container
+*  ps          List containers
+*  pull        Pull an image or a repository from a registry
+*  push        Push an image or a repository to a registry
+*  rename      Rename a container
+*  restart     Restart one or more containers
+*  rm          Remove one or more containers
+*  rmi         Remove one or more images
+*  run         Run a command in a new container
+*  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+*  search      Search the Docker Hub for images
+*  start       Start one or more stopped containers
+*  stats       Display a live stream of container(s) resource usage statistics
+*  stop        Stop one or more running containers
+*  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+*  top         Display the running processes of a container
+*  unpause     Unpause all processes within one or more containers
+*  update      Update configuration of one or more containers
+*  version     Show the Docker version information
+*  wait        Block until one or more containers stop, then print their exit codes
+## Potential errors
+1) `Error response from daemon: driver failed programming external connectivity on endpoint frosty_borg (098a0a8feab147d648beafd66841142b78e9f1ccf65275a539350446ffe8be40): Bind for 0.0.0.0:80 failed: port is already allocated.` ->The port through which you are trying to access the container is alreay occupied by another container/ process
+* Run `docker ps` and remove the container which is using the ip:
+```
+docker ps
+```
+* Then use the `contaner ID` to remove the process occupying the port:
+```
+rm container_id -f
+```
+* If a container is not using the same port and the issue persists, make sure that no other applications are using the port, for instance vagrant
+2) `docker: Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:80 -> 0.0.0.0:0: listen tcp 0.0.0.0:80: bind: An attempt was made to access a socket in a way forbidden by its access permissions.` -> Your machine is preventing you from using the selected port
+* To fix this, you will need to configure your firewall settings to allow the target port
+## Manually editing an nginx image
+1) Run the nginx image into a container using port 80:
+```
+docker -d -p 80:80 nginx 
+```
+2) Visualise the container ID:
+```
+docker ps
+```
+3) Interact with the container using a shell interface:
+```
+docker exec -it container_id sh
+```
+* If you receive an error mentioning `winpty`, run the following command and try the above steps again:
+```
+alias docker="winpty docker"
+```
+4) Navigate to the file responsible for what we see on the nginx home page, namely `index.html`
+```
+cd /usr
+```
+* Then :
+```
+cd share
+```
+* Then:
+```
+cd nginx
+```
+* Then:
+```
+cd html
+```
+5) Run an update to check internt connectivity:
+```
+apt get update
+```
+6) Run an upgrade:
+```
+apt get upgrade -y
+```
+7) Install a text editor like nano:
+```
+apt install nano
+```
+8) Edit the file with your desired output:
+```
+nano index.html
+```
+## Pushing a new image onto dockerhub using an edited image
+* Images are immutable, therefore to save changes to an image a new image must be made which will have the new configuration
+1) Exit the edited container after saving your changes:
+```
+exit
+```
+2) Visualise the container ID:
+```
+docker ps
+```
+3) Commit the changes to create a new container:
+```
+docker commit <existing-container-id> <hub-user>/<desired-repo-name/image-name>
+```
+4) Visualise the images to see if your image is made:
+```
+docker images
+```
+5) Tag the image:
+```
+docker tag <image-id> <hub-user>/<desired-repo-name/image-name>
+```
+6) Push the image to the desired repository:
+```
+docker push <hub-user></repo-name/image-name>
+```
+## Additional information about containers
+* Stopped containers hold their state
+* Once restarted they carry on from where they were stopped
+* If we have nothing running on port80, we can run `docker run -d -p 80:80 nginx` and it will run faster because we already have the image from before
+* If we did not commit a new image from an existing one and deleted our original image, our changes would be gone
+* If we had just stopped it, the change would still be there, but we deleted the container without saving
+* Images are immutable -> if you make a change have to rebuild image with new version
+* Name : repo-name/image-name
+* `docker run -d -p 4000:4000 docs/docker.github.io` -> lets you pull and execute an image which has the full docker documentation. You can now access the documentation offline on port 4000 : `localhost:4000`
+* Docker - tool for containing, building and managing containers
+## Containers
+* Standerdised, self contained pieces of software with the dependencies needed to run them
+* Units of software that can be taken anywhere where docker runs
+* Allows for the same application with the same environment to be ran anywhere
+* Support for containers is built into modern operating systems
+* Docker simplifies the process of managing containers, but not required
+## Why containers- Different dev and production envs
+* Why indeoendent, standardized application packages
+* Develeopmenta and production environments are often different e.g. dev enviornment may have software that requires a specific version to work, and another machine may have not have that version so it doesnt work
+* Docker is self contained, therefore it has the software and the required version to run it
+## Different dev environments within a team
+* Every teram member should have the exact same environment when working on the same project
+## Clashing tools/ versions and between different projects
+* When switching between projects,tools used in 
+## Virtual machines/ Virtual operating systems
+* Virtual machine runs inside your host machine
+* Can install extra tools in virtual machine
+* Problems - virtual OS is like a standalone machine, therefore lots of wasted space and resources -> eats up memory, cpu, harddrive space
+* Adv- seperate envs, env specific config, env confi can be shared and reproduced.
+* Disad - redundant duplication, e.g. all have linux installed seperately, slow, performance slow, boot times long, reproducing on other computers possible but can be tricky
+## Containers
+* Still have host os
+* Dont install new Os's, our OS has built in emulated container support
+* Run docker engine 
+* Can then spin up containers that contain code, libraries, dependencies and tools
+* Dont have the heavy weight Os's like vm's
+* Can configure and describe them with config files, and then share that config file so that they can make the same container
+* Low impact OS, fast, minimal disk space
+* Sharing, rebuilding and distribution easy
+* Encapsulates apps/envs instead of whole machines
+* VM's - bigger impact on OS, slower, more disk usage, sharing and rebuilding can be hard, encapsualtes whole machine instead of env
+## Docker tools and building blocks
+* Docker desktop used to install docker engine and to make sure that docker engine works
+* Command line interface (CLI) is used to work with docker
+* Docker hub lets us host our images in the cloud
+* Docker compose - makes managing more complex containers easier
+* Kubernetes - helps manage complex containereised applications
+## Making a container
+* Containers always based on images
+* To create an image, create a `Dockerfile`
+* Inside describe how container should be set up
+* `. (dot)` -> current directory
+* `docker build .` builds an image based on docker file
+* produces an ID
+* can run a container based on image with `docker run -p 3000:3000 ID` (the 3000 is the specific port)
+* To stop, run `docker ps`
+* Note the name of your docker process, and run `docker stop name`
+## Images and containers
+* Container
+* Images -> templates for containers
+* Images have required tools to execute the code
+* Can create multiple containers based on image
+* Container is the running instance of the image
+* 2 ways of getting an image
+* Use a a colleagues images or a pre-built/ community image
+* Can get images from docker hub
+* Open cmd, navigate to folder of choice, run `docker run node` -> this will use node image from docker hub and create

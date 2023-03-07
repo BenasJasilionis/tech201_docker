@@ -174,6 +174,82 @@ docker tag <image-id> <hub-user>/<desired-repo-name/image-name>
 ```
 docker push <hub-user></repo-name/image-name>
 ```
+## Building an image with a different nginx display using the `nginx` image as a template
+1) Inside a new directory, make a `Dockerfile
+2) On the same level, make a `index.html` file
+3) Inside the `index.html` file, enter the following code :
+```
+<html>  <head>   <title>Wellcome to Shahrukh's website</title>    <body>        <h1>Wellcome to Shahrukh's Website</h1>        <h2> This website is hosted inside a container using docker to build a Micro-Service</h2>        </body> </head></html>
+```
+4) Inside the `Dockerfile`, enter the following lines:
+```
+# Select base image
+FROM nginx
+
+# labelt it (optional)
+LABEL MAINTAINER=shahrukh@sparta
+
+# copy data from local host to the container
+COPY index.html /usr/share/nginx/html/
+
+# allow required port
+EXPOSE 80
+
+# execute required command
+CMD ["nginx", "-g", "daemon off;"]
+```
+5) Build the image:
+```
+docker build -t <your-docker-host-name/image-name:v1>
+```
+6) Execute the image, spinning up a container:
+```
+docker run -d -p 80:80 <your-docker-host-name/image-name:v1>
+```
+* From here, if the nginx webserver is working properly, you can push the image to your docker repository
+7) First, you will need to tag the image:
+```
+docker tag <image-id> <docker-host-name>/<image-name>
+```
+8) Then push the image:
+```
+docker push <docker-host-name>/<image-name>
+```
+## Building an image of the node app
+1) Create a new directory called `nodejs`
+2) Inside the directory make a new `Dockerfile`
+3) Copy your `app` directory into your `nodejs` directory, this can be done using the windows graphical interface
+4) Inside the `Dockerfile`, enter the following code:
+```
+# From which image
+FROM node:latest
+
+RUN mkdir -p /app/src
+# Set container working directory
+WORKDIR /app/src
+# copy data app folder
+
+COPY package*.json .
+
+# copy data app folder
+COPY app .
+# install dependencies (npm)
+RUN apt update && apt upgrade -y && apt install nginx -y && apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates && curl -sL https://deb.nodesource.com/setup_12.x && apt update && apt -y install nodejs && npm install pm2 -g 
+
+# expose port
+EXPOSE 3000
+# launch app
+CMD ["npm", "start", "daemon off;"]
+```
+* From here, if the app is working properly, you can push the image to your docker repository
+5) First, you will need to tag the image:
+```
+docker tag <image-id> <docker-host-name>/<image-name>
+```
+6) Then push the image:
+```
+docker push <docker-host-name>/<image-name>
+```
 ## Additional information about containers
 * Stopped containers hold their state
 * Once restarted they carry on from where they were stopped
@@ -241,3 +317,7 @@ docker push <hub-user></repo-name/image-name>
 * Use a a colleagues images or a pre-built/ community image
 * Can get images from docker hub
 * Open cmd, navigate to folder of choice, run `docker run node` -> this will use node image from docker hub and create
+## More on docker
+* Can only have 1 dockerfile per directory/folder 
+* Docker images are lightweight
+* docker build -t benasj/tech201-nginx:v1 .

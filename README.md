@@ -55,6 +55,8 @@
 * Use a colleagues images or a pre-built/ community image
 * Can get images from docker hub
 * Open cmd, navigate to folder of choice, run `docker run node` -> this will use node image from docker hub and create
+## Microservices
+* Microservices are an architectural and organizational approach to software development where software is composed of small independent services that communicate over well-defined APIs.
 ## Docker architecture
 * Docker installed locally
 * Want to communicate with dockerhub

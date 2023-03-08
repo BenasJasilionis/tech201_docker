@@ -1,3 +1,60 @@
+## Containers
+* Standerdised, self contained pieces of software with the dependencies needed to run them
+* Units of software that can be taken anywhere where docker runs
+* Allows for the same application with the same environment to be ran anywhere
+* Support for containers is built into modern operating systems
+* Docker simplifies the process of managing containers, but not required
+## Why containers- Different dev and production envs
+* Why independent, standardized application packages
+* Develeopment and production environments are often different e.g. dev enviornment may have software that requires a specific version to work, and another machine may have not have that version so it doesnt work
+* Docker is self contained, therefore it has the software and the required version to run it
+## Different dev environments within a team
+* Every team member should have the exact same environment when working on the same project
+## Clashing tools/ versions and between different projects
+* When switching between projects,tools used in those projects may not be compatable with each other and cause errors
+## Virtual machines/ Virtual operating systems
+* Virtual machine runs inside your host machine
+* Can install extra tools in virtual machine
+* Problems - virtual OS is like a standalone machine, therefore lots of wasted space and resources -> eats up memory, cpu, harddrive space
+* Adv- seperate envs, env specific config, env confi can be shared and reproduced.
+* Disad - redundant duplication, e.g. all have linux installed seperately, slow, performance slow, boot times long, reproducing on other computers possible but can be tricky
+## More on containers
+* Still have host os
+* Dont install new Os's, our OS has built in emulated container support
+* Run docker engine 
+* Can then spin up containers that contain code, libraries, dependencies and tools
+* Dont have the heavy weight Os's like vm's
+* Can configure and describe them with config files, and then share that config file so that they can make the same container
+* Low impact OS, fast, minimal disk space
+* Sharing, rebuilding and distribution easy
+* Encapsulates apps/envs instead of whole machines
+* VM's - bigger impact on OS, slower, more disk usage, sharing and rebuilding can be hard, encapsualtes whole machine instead of env
+## Docker tools and building blocks
+* Docker desktop used to install docker engine and to make sure that docker engine works
+* Command line interface (CLI) is used to work with docker
+* Docker hub lets us host our images in the cloud
+* Docker compose - makes managing more complex containers easier
+* Kubernetes - helps manage complex containereised applications
+## Making a container
+* Containers always based on images
+* To create an image, create a `Dockerfile`
+* Inside describe how container should be set up
+* `. (dot)` -> current directory
+* `docker build .` builds an image based on docker file
+* produces an ID
+* can run a container based on image with `docker run -p 3000:3000 ID` (the 3000 is the specific port)
+* To stop, run `docker ps`
+* Note the name of your docker process, and run `docker stop name`
+## Images and containers
+* Container
+* Images -> templates for containers
+* Images have required tools to execute the code
+* Can create multiple containers based on image
+* Container is the running instance of the image
+* 2 ways of getting an image
+* Use a colleagues images or a pre-built/ community image
+* Can get images from docker hub
+* Open cmd, navigate to folder of choice, run `docker run node` -> this will use node image from docker hub and create
 ## Docker architecture
 * Docker installed locally
 * Want to communicate with dockerhub
@@ -260,64 +317,11 @@ docker push <docker-host-name>/<image-name>
 * Name : repo-name/image-name
 * `docker run -d -p 4000:4000 docs/docker.github.io` -> lets you pull and execute an image which has the full docker documentation. You can now access the documentation offline on port 4000 : `localhost:4000`
 * Docker - tool for containing, building and managing containers
-## Containers
-* Standerdised, self contained pieces of software with the dependencies needed to run them
-* Units of software that can be taken anywhere where docker runs
-* Allows for the same application with the same environment to be ran anywhere
-* Support for containers is built into modern operating systems
-* Docker simplifies the process of managing containers, but not required
-## Why containers- Different dev and production envs
-* Why indeoendent, standardized application packages
-* Develeopmenta and production environments are often different e.g. dev enviornment may have software that requires a specific version to work, and another machine may have not have that version so it doesnt work
-* Docker is self contained, therefore it has the software and the required version to run it
-## Different dev environments within a team
-* Every teram member should have the exact same environment when working on the same project
-## Clashing tools/ versions and between different projects
-* When switching between projects,tools used in 
-## Virtual machines/ Virtual operating systems
-* Virtual machine runs inside your host machine
-* Can install extra tools in virtual machine
-* Problems - virtual OS is like a standalone machine, therefore lots of wasted space and resources -> eats up memory, cpu, harddrive space
-* Adv- seperate envs, env specific config, env confi can be shared and reproduced.
-* Disad - redundant duplication, e.g. all have linux installed seperately, slow, performance slow, boot times long, reproducing on other computers possible but can be tricky
-## Containers
-* Still have host os
-* Dont install new Os's, our OS has built in emulated container support
-* Run docker engine 
-* Can then spin up containers that contain code, libraries, dependencies and tools
-* Dont have the heavy weight Os's like vm's
-* Can configure and describe them with config files, and then share that config file so that they can make the same container
-* Low impact OS, fast, minimal disk space
-* Sharing, rebuilding and distribution easy
-* Encapsulates apps/envs instead of whole machines
-* VM's - bigger impact on OS, slower, more disk usage, sharing and rebuilding can be hard, encapsualtes whole machine instead of env
-## Docker tools and building blocks
-* Docker desktop used to install docker engine and to make sure that docker engine works
-* Command line interface (CLI) is used to work with docker
-* Docker hub lets us host our images in the cloud
-* Docker compose - makes managing more complex containers easier
-* Kubernetes - helps manage complex containereised applications
-## Making a container
-* Containers always based on images
-* To create an image, create a `Dockerfile`
-* Inside describe how container should be set up
-* `. (dot)` -> current directory
-* `docker build .` builds an image based on docker file
-* produces an ID
-* can run a container based on image with `docker run -p 3000:3000 ID` (the 3000 is the specific port)
-* To stop, run `docker ps`
-* Note the name of your docker process, and run `docker stop name`
-## Images and containers
-* Container
-* Images -> templates for containers
-* Images have required tools to execute the code
-* Can create multiple containers based on image
-* Container is the running instance of the image
-* 2 ways of getting an image
-* Use a a colleagues images or a pre-built/ community image
-* Can get images from docker hub
-* Open cmd, navigate to folder of choice, run `docker run node` -> this will use node image from docker hub and create
 ## More on docker
 * Can only have 1 dockerfile per directory/folder 
 * Docker images are lightweight
 * docker build -t benasj/tech201-nginx:v1 .
+## Database
+* docker run -d --name mongodb -v data:/data/db mongo
+* -v -> volume
+* Takes whatever is on /data/db and puts it on local host

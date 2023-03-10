@@ -327,3 +327,23 @@ docker push <docker-host-name>/<image-name>
 * docker run -d --name mongodb -v data:/data/db mongo
 * -v -> volume
 * Takes whatever is on /data/db and puts it on local host
+## Building a docker container on an EC2 instance
+1) Create a blank EC2 instance without an AMI
+2) Use ubuntu 18.04
+3) For security group rules, allow 22,80 and 3000
+4) Run an update inside the instance:
+```
+sudo apt update
+```
+5) Run the following code:
+```
+curl -fsSL https://get.docker.com -o get-docker.sh
+```
+6) Install docker:
+```
+sudo sh get-docker.sh
+```
+7) Spin a container up from your image, for me this would be:
+```
+sudo docker run -d -p 3000:3000 benasj/app:v1
+```

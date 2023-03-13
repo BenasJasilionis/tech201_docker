@@ -151,7 +151,7 @@
 ```
 docker ps
 ```
-* Then use the `contaner ID` to remove the process occupying the port:
+* Then use the `container ID` to remove the process occupying the port:
 ```
 rm container_id -f
 ```
@@ -259,7 +259,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 5) Build the image:
 ```
-docker build -t <your-docker-host-name/image-name:v1>
+docker build -t <your-docker-host-name/image-name:v1> .
 ```
 6) Execute the image, spinning up a container:
 ```
@@ -347,3 +347,39 @@ sudo sh get-docker.sh
 ```
 sudo docker run -d -p 3000:3000 benasj/app:v1
 ```
+## Docker compose
+* Docker compose helps run multiple containers in 1 file
+* Helps link containers
+* Fewer dependencies than K8, only dependency is docker
+* Run multiple containers with a single command
+* Need to spin up node container first, ssh into node, create environement variable with mongo container
+* Mongo container must already be running
+* Write a yaml script to create a container for mongo then node then environement variable
+## Why K8
+* Kubernetes is for big applications
+## Doing
+* Name the file docker-compose.yml
+* Need 2 services, 1 for mongo, 1 for the app
+* Volumes -> storage (like a usb drive) -> make data persistent
+* Run script: `docker-compose up`
+* Kill it: `docker-compose down`
+##
+* `command:` -> overwrites CMD instructions
+## Docker compose information
+* Docker is built in layers
+* If something changes in a layer, it is run again, and so is every layer above the initially changed one
+* Copy package.json first because it has all the dependencies
+* Because package.json is in a lower layer than app, if anything in app is changed, all of the dependencies do not have to be reinstalled because they are cached (saved) in a lower layer
+* package.json is a list of dependencies
+* NPM install -> install the dependencies listed in package.json
+* When database is populated by seed.js (program that sends thing to target instance, in this case mongo instance. Does this by using faker module in for loop which generates random words), that data is stored in /data/db
+* **Named volumes**, anonymous volume -> used for protecting files so bind mount doesnt overwrite it, bind mount -> 
+* Cant do node seeds/seed.js within run command
+* RUN is within the image, and there is no database when the RUN command is ran, therefore node seeds/seed.js will never work
+* Can read the env variable, but cannot link because there is no networking in images
+* Can only resolve what mongo is in containerised form because thats when it is in a network
+* Docker compose makes a default network with the name of the host folder
+* Connects every container within docker-compose, they can therefore communicate using their container names
+* This is why changing the mongodv.conf is unneccassary, the app and database are already linked through the network
+* The container which seeds the database is destroyed after it does so, because there is no process concurantly running
+
